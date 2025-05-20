@@ -1,0 +1,9 @@
+id,nome,email,telefone,data_nascimento,cpf
+0,João Silva,joao.silva@email.com,85999990001,1990-05-10,12345678901
+1,Maria Oliveira,maria.oliveira@email.com,85999990002,1985-12-20,23456789012
+2,Carlos Souza,carlos.souza@email.com,85999990003,1992-08-15,34567890123
+3,Ana Paula,ana.paula@email.com,85999990004,1998-03-25,45678901234
+4,Rafael Lima,rafael.lima@email.com,85999990005,2000-11-11,56789012345
+5,Juliana Martins,juliana.martins@email.com,85999990008,1993-09-17,89012345678
+6,Diego Mendes,diego.mendes@email.com,85999990009,1987-06-05,90123456789
+7,Larissa Fernandes,larissa.fernandes@email.com,85999990010,1999-10-12,01234567890

@@ -1,0 +1,11 @@
+2025-05-06 13:12:53,056 [ERROR] pedido: Erro ao criar pedido: False
+2025-05-06 13:15:11,920 [ERROR] pedido: Erro ao criar pedido: False
+2025-05-06 13:17:46,549 [INFO] pedido: Pedido criado com sucesso
+2025-05-06 13:19:08,894 [INFO] pedido: Pedido criado com sucesso
+2025-05-14 18:08:00,023 [INFO] pedido: Pedido criado com sucesso
+2025-05-14 18:08:05,055 [INFO] pedido: Pedido criado com sucesso
+2025-05-14 18:08:08,679 [INFO] pedido: Pedido criado com sucesso
+2025-05-14 18:08:13,029 [INFO] pedido: Pedido criado com sucesso
+2025-05-14 18:08:16,652 [INFO] pedido: Pedido criado com sucesso
+2025-05-14 18:08:20,316 [INFO] pedido: Pedido criado com sucesso
+2025-05-14 18:10:45,770 [ERROR] pedido: ID 10 de cliente inválido

@@ -1,0 +1,11 @@
+id,nome,descricao,preco,categoria,disponivel
+0,Bruschetta,"Pão italiano com tomate, manjericão e azeite",12.5,Entrada,True
+1,Risoto de Cogumelos,Risoto cremoso com mix de cogumelos frescos,34.9,Principal,True
+2,Pudim de Leite,Clássico pudim com calda de caramelo,10.0,Sobremesa,True
+3,Coca-Cola 350ml,Refrigerante gelado,6.0,Bebida,True
+4,Batata Frita,Batatas crocantes com sal,15.0,Acompanhamento,True
+5,Água com Gás,Garrafa 500ml,4.0,Bebida,False
+6,Filé à Parmegiana,Filé empanado com queijo e molho de tomate,39.9,Principal,True
+7,Salada Caesar,"Alface, frango grelhado, parmesão e molho",22.0,Entrada,True
+8,Sorvete Artesanal,Bola de sorvete de baunilha com calda,9.5,Sobremesa,False
+9,Guarnição Especial,"Arroz, farofa e vinagrete",7.5,Outro,True
