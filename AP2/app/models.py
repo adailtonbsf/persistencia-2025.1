@@ -1,7 +1,7 @@
-from typing import List, Optional
-from sqlmodel import Field, Relationship, SQLModel, create_engine
 from datetime import datetime, date
 from enum import Enum
+from typing import List, Optional
+from sqlmodel import Field, Relationship, SQLModel
 
 class StatusPedido(str, Enum):
     EM_ABERTO = "Em aberto"

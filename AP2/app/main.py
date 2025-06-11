@@ -60,7 +60,6 @@ async def pratos_mais_vendidos(
     session=Depends(get_session),
     limit: int = Query(5, ge=1, le=100)
 ):
-    from sqlalchemy import func
     results = (
         session.query(Prato.nome, func.sum(PedidoPrato.quantidade).label("total_vendido"))
         .join(PedidoPrato)
