@@ -1,3 +1,5 @@
+from sqlalchemy import func
+
 from ..models import Pedido, PedidoRead, PedidoCreate, FormaPagamento, StatusPedido, Cliente, Funcionario
 from fastapi import APIRouter, Depends, HTTPException, Query
 from ..database import get_session
@@ -32,7 +34,7 @@ async def listar_pedidos(
     if funcionario_id:
         query = query.filter(Pedido.funcionario_id == funcionario_id)
     if data_pedido:
-        query = query.filter(Pedido.data_pedido == data_pedido)
+        query = query.filter(func.date(Pedido.data_pedido) == data_pedido.date())
     if forma_pagamento:
         query = query.filter(Pedido.forma_pagamento.ilike(f"%{forma_pagamento}%"))
 

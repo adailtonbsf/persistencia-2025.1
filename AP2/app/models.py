@@ -117,6 +117,14 @@ class PedidoPratoRead(PedidoPratoBase):
 class PedidoPratoCreate(PedidoPratoBase):
     pass
 
+class ClienteWithPedidosRead(SQLModel):
+    id: int
+    nome: str
+    pedidos: List[PedidoRead] = []
+
+    class Config:
+        orm_mode = True
+
 Cliente.model_rebuild()
 Funcionario.model_rebuild()
 Prato.model_rebuild()
