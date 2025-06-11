@@ -1,67 +1,123 @@
-from sqlalchemy.orm import relationship, declarative_base
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean, Float
+from typing import List, Optional
+from sqlmodel import Field, Relationship, SQLModel, create_engine
+from datetime import datetime, date
+from enum import Enum
 
-Base = declarative_base()
+class StatusPedido(str, Enum):
+    EM_ABERTO = "Em aberto"
+    FECHADO = "Fechado"
 
-class Cliente(Base):
+class FormaPagamento(str, Enum):
+    PIX = "Pix"
+    DINHEIRO = "Dinheiro"
+    CARTAO = "Cartão"
+
+class ClienteBase(SQLModel):
+    nome: str
+    email: str = Field(unique=True, index=True)
+    cpf: str = Field(unique=True, index=True)
+    telefone: str
+    data_cadastro: date = Field(default_factory=date.today)
+
+class Cliente(ClienteBase, table=True):
     __tablename__ = 'clientes'
 
-    id = Column(Integer, primary_key=True)
-    nome = Column(String, nullable=False)
-    email = Column(String, unique=True, nullable=False)
-    cpf = Column(String, unique=True, nullable=False)
-    telefone = Column(String, nullable=False)
-    data_cadastro = Column(DateTime, nullable=False)
+    id: Optional[int] = Field(default=None, primary_key=True)
 
-    pedidos = relationship("Pedido", back_populates="cliente")
+    pedidos: List["Pedido"] = Relationship(back_populates="cliente")
 
-class Pedido(Base):
+class ClienteRead(ClienteBase):
+    id: int
+
+class ClienteCreate(ClienteBase):
+    pass
+
+class PedidoBase(SQLModel):
+    status: StatusPedido = Field(default=StatusPedido.EM_ABERTO)
+    observacao: Optional[str] = None
+    forma_pagamento: Optional[FormaPagamento] = None
+    data_pedido: datetime = Field(default_factory=datetime.now)
+    cliente_id: int = Field(foreign_key="clientes.id")
+    funcionario_id: int = Field(foreign_key="funcionarios.id")
+
+class Pedido(PedidoBase, table=True):
     __tablename__ = 'pedidos'
 
-    id = Column(Integer, primary_key=True)
-    cliente_id = Column(Integer, ForeignKey('clientes.id'), nullable=False)
-    funcionario_id = Column(Integer, ForeignKey('funcionarios.id'), nullable=False)
-    status = Column(String, nullable=False)
-    observacao = Column(String, nullable=True)
-    forma_pagamento = Column(String, nullable=True)
-    data_pedido = Column(DateTime, nullable=False)
+    id: Optional[int] = Field(default=None, primary_key=True)
 
-    cliente = relationship("Cliente", back_populates="pedidos")
-    funcionario = relationship("Funcionario", back_populates="pedidos")
-    pedido_pratos = relationship("PedidoPrato", back_populates="pedido")
+    cliente: Optional[Cliente] = Relationship(back_populates="pedidos")
+    funcionario: Optional["Funcionario"] = Relationship(back_populates="pedidos")
+    pedido_pratos: List["PedidoPrato"] = Relationship(back_populates="pedido")
 
-class Funcionario(Base):
+class PedidoRead(PedidoBase):
+    id: int
+
+class PedidoCreate(PedidoBase):
+    pass
+
+class FuncionarioBase(SQLModel):
+    nome: str
+    email: str = Field(unique=True, index=True)
+    cargo: str
+    data_admissao: date = Field(default_factory=date.today)
+
+class Funcionario(FuncionarioBase, table=True):
     __tablename__ = 'funcionarios'
 
-    id = Column(Integer, primary_key=True)
-    nome = Column(String, nullable=False)
-    email = Column(String, unique=True, nullable=False)
-    cargo = Column(String, nullable=False)
-    data_admissao = Column(DateTime, nullable=False)
+    id: Optional[int] = Field(default=None, primary_key=True)
 
-    pedidos = relationship("Pedido", back_populates="funcionario")
+    pedidos: List[Pedido] = Relationship(back_populates="funcionario")
 
-class Prato(Base):
+class FuncionarioRead(FuncionarioBase):
+    id: int
+
+class FuncionarioCreate(FuncionarioBase):
+    pass
+
+class PratoBase(SQLModel):
+    nome: str
+    descricao: Optional[str] = None
+    preco: float
+    categoria: str
+    disponibilidade: bool = Field(default=True)
+
+class Prato(PratoBase, table=True):
     __tablename__ = 'pratos'
 
-    id = Column(Integer, primary_key=True)
-    nome = Column(String, nullable=False)
-    descricao = Column(String, nullable=True)
-    preco = Column(Integer, nullable=False)
-    categoria = Column(String, nullable=False)
-    disponibilidade = Column(Boolean, nullable=False)
+    id: Optional[int] = Field(default=None, primary_key=True)
 
-    pedidos = relationship("PedidoPrato", back_populates="prato")
+    pedidos_prato: List["PedidoPrato"] = Relationship(back_populates="prato")
 
-class PedidoPrato(Base):
+class PratoRead(PratoBase):
+    id: int
+
+class PratoCreate(PratoBase):
+    pass
+
+class PedidoPratoBase(SQLModel):
+    quantidade: int
+    preco_unitario: float
+    subtotal: float
+
+    pedido_id: int = Field(foreign_key="pedidos.id")
+    prato_id: int = Field(foreign_key="pratos.id")
+
+class PedidoPrato(PedidoPratoBase, table=True):
     __tablename__ = 'pedido_pratos'
 
-    id = Column(Integer, primary_key=True)
-    pedido_id = Column(Integer, ForeignKey('pedidos.id'), nullable=False)
-    prato_id = Column(Integer, ForeignKey('pratos.id'), nullable=False)
-    quantidade = Column(Integer, nullable=False)
-    preco_unitario = Column(Float, nullable=False)
-    subtotal = Column(Float, nullable=False)
+    id: Optional[int] = Field(default=None, primary_key=True)
 
-    pedido = relationship("Pedido", back_populates="pedido_pratos")
-    prato = relationship("Prato", back_populates="pedidos")
+    pedido: Optional[Pedido] = Relationship(back_populates="pedido_pratos")
+    prato: Optional[Prato] = Relationship(back_populates="pedidos_prato")
+
+class PedidoPratoRead(PedidoPratoBase):
+    id: int
+
+class PedidoPratoCreate(PedidoPratoBase):
+    pass
+
+Cliente.model_rebuild()
+Funcionario.model_rebuild()
+Prato.model_rebuild()
+Pedido.model_rebuild()
+PedidoPrato.model_rebuild()
