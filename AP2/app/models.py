@@ -59,6 +59,7 @@ class FuncionarioBase(SQLModel):
     nome: str
     email: str = Field(unique=True, index=True)
     cargo: str
+    telefone: Optional[str] = Field(default=None, index=True)
     data_admissao: date = Field(default_factory=date.today)
 
 class Funcionario(FuncionarioBase, table=True):
