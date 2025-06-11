@@ -1,6 +1,5 @@
-from typing import Optional, List
 from pydantic import BaseModel
-
+from typing import List
 
 class UserBase(BaseModel):
     username: str
@@ -11,26 +10,6 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: int
-
-    class Config:
-        orm_mode = True
-
-class PostBase(BaseModel):
-    title: str
-    content: str
-
-class PostCreate(PostBase):
-    category_ids: Optional[List[int]] = []
-
-class PostUpdate(PostBase):
-    title: Optional[str] = None
-    content: Optional[str] = None
-    category_ids: Optional[List[int]] = None
-
-class Post(PostBase):
-    id: int
-    user_id: int
-    categories: List[int] = []
 
     class Config:
         orm_mode = True
@@ -47,6 +26,35 @@ class Category(CategoryBase):
     class Config:
         orm_mode = True
 
+class CategoryWithPostCount(Category):
+    post_count: int
+
+    class Config:
+        orm_mode = True
+
+class PostBase(BaseModel):
+    title: str
+    content: str
+
+class PostCreate(PostBase):
+    user_id: int
+    category_ids: List[int] = []
+
+class Post(PostBase):
+    id: int
+    user_id: int
+    user: User
+    categories: List[Category] = []
+
+    class Config:
+        orm_mode = True
+
+class PostWithCommentCount(Post):
+    comment_count: int
+
+    class Config:
+        orm_mode = True
+
 class CommentBase(BaseModel):
     content: str
 
@@ -57,6 +65,8 @@ class Comment(CommentBase):
     id: int
     post_id: int
     user_id: int
+    user: User
+    post: Post
 
     class Config:
         orm_mode = True
@@ -71,6 +81,8 @@ class Like(LikeBase):
     id: int
     post_id: int
     user_id: int
+    user: User
+    post: Post
 
     class Config:
         orm_mode = True

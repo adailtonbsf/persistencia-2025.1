@@ -1,19 +1,19 @@
 from fastapi import FastAPI
-from fastapi_crudrouter import SQLAlchemyCRUDRouter
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
-
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+from database import Base, engine
+from routers import users, posts, comments, categories, likes
 
 app = FastAPI()
 
-user_router = SQLAlchemyCRUDRouter(
-    schema=User,
-    db_model=User,
-    db=SessionLocal,
-    prefix="Users"
-)
+Base.metadata.create_all(bind=engine)
 
-app.include_router(user_router)
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
+app.include_router(users.router)
+app.include_router(posts.router)
+app.include_router(comments.router)
+app.include_router(categories.router)
+app.include_router(likes.router)
+
