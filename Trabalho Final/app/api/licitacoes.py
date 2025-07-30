@@ -104,8 +104,8 @@ def list_licitacoes(
     ).all()
     return licitacoes
 
-@router.get("/licitacoes-por-orgao")
-def licitacoes_por_orgao(
+@router.get("/qtd-licitacoes-por-orgao")
+def qtd_licitacoes_por_orgao(
     offset: int = Query(0, ge=0),
     limit: int = Query(10, ge=1, le=100),
     orgao_nome: str = Query(None, description="Filtrar por nome do órgão"),

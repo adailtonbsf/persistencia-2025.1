@@ -14,7 +14,45 @@ from app.models.orgao import Orgao
 from app.schemas.Contrato import ContratoRead, ContratoCreate
 from app.database import get_session
 from app.utils.logger import logger
-from app.scripts.populate_db import get_or_create_fornecedor
+
+def get_or_create_fornecedor(session: Session, row_data: dict) -> Fornecedor | None:
+    try:
+        fornecedor_str = row_data.get('fornecedor', '{}')
+        if not fornecedor_str or fornecedor_str == '[]':
+            return None
+
+        fornecedor_data = ast.literal_eval(fornecedor_str)
+
+        # Prioriza CNPJ, depois CPF
+        cpf_cnpj = fornecedor_data.get('cnpjFormatado') or fornecedor_data.get('cpfFormatado')
+        if not cpf_cnpj:
+            return None
+
+        # Remove caracteres não numéricos
+        cpf_cnpj = ''.join(filter(str.isdigit, cpf_cnpj))
+
+        fornecedor = session.exec(select(Fornecedor).where(Fornecedor.cpf_cnpj == cpf_cnpj)).first()
+
+        if not fornecedor:
+            nome = fornecedor_data.get('nome', 'Não informado')
+            razao_social = fornecedor_data.get('razaoSocialReceita')
+            tipo_pessoa = 'J' if fornecedor_data.get('cnpjFormatado') else 'F'
+
+            fornecedor = Fornecedor(
+                cpf_cnpj=cpf_cnpj,
+                nome=nome,
+                razao_social=razao_social,
+                tipo_pessoa=tipo_pessoa
+            )
+            session.add(fornecedor)
+            session.commit()
+            session.refresh(fornecedor)
+
+        return fornecedor
+
+    except (ValueError, SyntaxError, KeyError) as e:
+        print(f"Aviso: Erro ao processar dados do fornecedor: {e}. Linha: {row_data}")
+        return None
 
 router = APIRouter(prefix="/contratos", tags=["Contratos"])
 

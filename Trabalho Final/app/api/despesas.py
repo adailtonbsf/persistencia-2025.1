@@ -1,5 +1,6 @@
 import ast
 import csv
+from datetime import datetime
 from io import StringIO
 
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File
@@ -7,8 +8,15 @@ from sqlmodel import Session, select
 from app.models.despesa import Despesa
 from app.schemas.Despesa import DespesaRead, DespesaCreate
 from app.database import get_session
-from app.scripts.populate_db import parse_date
 from app.utils.logger import logger
+
+def parse_date(date_str: str):
+    if not date_str or not isinstance(date_str, str):
+        return None
+    try:
+        return datetime.strptime(date_str, '%d/%m/%Y').date()
+    except ValueError:
+        return None
 
 router = APIRouter(prefix="/despesas", tags=["Despesas"])
 
